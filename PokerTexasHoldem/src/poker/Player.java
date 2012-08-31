@@ -129,8 +129,13 @@ public class Player {
 		ArrayList<Card> cards = new ArrayList<Card>();
 		cards.addAll(wholeCards);
 		cards.addAll(sharedCards);
+		
+		System.out.println(cards.toString());
+		
 		CardRating rating = new CardRating();
 		int[] cardsStrength = rating.calcCardsPower(cards);
+		
+		System.out.println(cardsStrength[0]);
 		
 		if(this.type == PlayerType.DEFENSIVE){
 			
@@ -141,9 +146,9 @@ public class Player {
 		}
 		else if(this.type == PlayerType.NORMAL){
 			
-			if(cardsStrength[0] < 1)
+			if(cardsStrength[0] < 2)
 				action = Action.FOLD;
-			else if (cardsStrength[0] > 2 && cardsStrength[0] < 5)
+			else if (cardsStrength[0] >= 2 && cardsStrength[0] < 5)
 				action = Action.CALL;
 			else
 				action = Action.RAISE;
@@ -151,7 +156,7 @@ public class Player {
 		}
 		else if(this.type == PlayerType.AGGRESSIVE){
 			
-			if(cardsStrength[0] < 4)
+			if(cardsStrength[0] >= 4)
 				action = Action.RAISE;
 			else
 				action = Action.CALL;
@@ -162,6 +167,7 @@ public class Player {
 			action = Action.CALL;
 		
 		
+		System.out.println(action.toString());
 		return action;
 	}
 
