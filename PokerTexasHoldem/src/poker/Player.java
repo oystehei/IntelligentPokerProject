@@ -129,7 +129,8 @@ public class Player {
 		ArrayList<Card> cards = new ArrayList<Card>();
 		cards.addAll(wholeCards);
 		cards.addAll(sharedCards);
-		int[] cardsStrength = calcCardsPower(cards);
+		CardRating rating = new CardRating();
+		int[] cardsStrength = rating.calcCardsPower(cards);
 		
 		if(this.type == PlayerType.DEFENSIVE){
 			
@@ -163,13 +164,5 @@ public class Player {
 		
 		return action;
 	}
-
-
-	private int[] calcCardsPower(ArrayList<Card> cards) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
 
 }
