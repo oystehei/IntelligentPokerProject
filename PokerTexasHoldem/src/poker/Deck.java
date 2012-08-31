@@ -18,7 +18,7 @@ public class Deck {
     }
 
     /**
-     * Clears the current ceck and builds a new deck sorted
+     * Clears the current deck and builds a new deck sorted
      */
     public void buildDeck(){
         cards.clear();
