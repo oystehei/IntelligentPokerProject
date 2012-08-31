@@ -81,7 +81,7 @@ public class PokerSimulator {
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
-						this.table.endRound();
+						this.table.endRound(this.table.getActivePlayers().get(0));
 						return true;
 					}
 						
@@ -182,7 +182,7 @@ public class PokerSimulator {
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
-						this.table.endRound();
+						this.table.endRound(this.table.getActivePlayers().get(0));
 						return true;
 					}
 						
@@ -254,6 +254,18 @@ public class PokerSimulator {
 		
 		return false;
 		
+	}
+	
+	public void initShowdown(){
+		
+		Player winner = null;
+		
+		while(table.getActivePlayers().size() > 1)
+			for(Player player : table.getActivePlayers())
+				if(winner!=null && player.getCards())
+				winner = player;
+				if()
+			
 	}
 	
 	public void printTable(){

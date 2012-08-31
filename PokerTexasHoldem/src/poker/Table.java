@@ -182,9 +182,9 @@ public class Table {
 	/*
 	 * Only one player left, give him the pot and reset the table
 	 */
-	public void endRound(){
-		this.lastWinner = this.activePlayers.get(0);
-		this.activePlayers.get(0).addMoney(getPotSize());
+	public void endRound(Player winner){
+		this.lastWinner = winner;
+		winner.addMoney(getPotSize());
 		this.activePlayers.clear();
 		this.sharedCards.clear();
 		this.deck = new Deck();
