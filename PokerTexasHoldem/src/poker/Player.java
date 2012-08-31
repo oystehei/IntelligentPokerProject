@@ -126,21 +126,23 @@ public class Player {
 		
 		Action action = Action.CALL;
 		
-		
+		ArrayList<Card> cards = new ArrayList<Card>();
+		cards.addAll(wholeCards);
+		cards.addAll(sharedCards);
+		int[] cardsStrength = calcCardsPower(cards);
 		
 		if(this.type == PlayerType.DEFENSIVE){
 			
-			if(true)
+			if(cardsStrength[0] < 3)
 				action = Action.FOLD;
 			else
 				action = Action.CALL;
-			
 		}
 		else if(this.type == PlayerType.NORMAL){
 			
-			if(false)
+			if(cardsStrength[0] < 1)
 				action = Action.FOLD;
-			else if (false)
+			else if (cardsStrength[0] > 2 && cardsStrength[0] < 5)
 				action = Action.CALL;
 			else
 				action = Action.RAISE;
@@ -148,12 +150,11 @@ public class Player {
 		}
 		else if(this.type == PlayerType.AGGRESSIVE){
 			
-			if(false)
+			if(cardsStrength[0] < 4)
 				action = Action.RAISE;
 			else
 				action = Action.CALL;
 		}
-		
 		
 		//Player is not allowed to fold if he was the last player to raise.
 		if(action == Action.FOLD && allowedToFold == false)
@@ -161,6 +162,12 @@ public class Player {
 		
 		
 		return action;
+	}
+
+
+	private int[] calcCardsPower(ArrayList<Card> cards) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
