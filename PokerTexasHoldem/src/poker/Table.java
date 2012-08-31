@@ -172,8 +172,6 @@ public class Table {
 	 */
 	public void endRound(){
 		
-		System.out.println("Runden er over, Spiller" + Integer.toString(this.activePlayers.get(0).getPlayerID()) + " vant " + Integer.toString(getPotSize()) + "kr");
-		
 		this.activePlayers.get(0).addMoney(getPotSize());
 		this.activePlayers.clear();
 		setPotSize(0);
