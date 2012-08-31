@@ -45,7 +45,7 @@ public class PokerSimulator {
 	public void initiatePreFlopBetting(){
 		
 		boolean bettingEnded = false;
-		int raisePlayer = this.table.getBigBlindID();	//ID of the player with the latest raise
+		int raisePlayer = -1;	//ID of the player with the latest raise
 		
 		while(!bettingEnded){
 			
@@ -55,7 +55,8 @@ public class PokerSimulator {
 						
 			for(Player player: activePlayers){
 				
-				boolean allowedToFold = !(player.getPlayerID() == raisePlayer);
+				boolean allowedToFold = (player.getPlayerID() != table.getBigBlindID() && player.getPlayerID() != raisePlayer);
+				
 				Action playerAction = player.decidePreFlopAction(allowedToFold);
 				
 				if(playerAction == Action.FOLD){
@@ -75,8 +76,9 @@ public class PokerSimulator {
 				else if(playerAction == Action.CALL){
 					player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 					this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
-					
-					System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " callet.");
+					player.setCurrentBet(this.table.getCurrentBet());
+					System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
+					System.out.println("Pot: "+ Integer.toString(this.table.getPotSize()));
 					
 					/*
 					 * If the player who made the last raise calls, the betting round is over
@@ -92,14 +94,15 @@ public class PokerSimulator {
 					if(this.numOfRaises == this.maxRaises){
 						player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 						this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
-						
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " callet.");
+						player.setCurrentBet(this.table.getCurrentBet());
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 						
 						/*
 						 * If the player who made the last raise calls, the betting round is over
 						 */
 						if(player.getPlayerID() == raisePlayer){
 							bettingEnded = true;
+							break;
 						}
 						
 					}
@@ -107,6 +110,7 @@ public class PokerSimulator {
 						table.setCurrentBet(this.table.getCurrentBet() + this.raiseAmount);
 						player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 						this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
+						player.setCurrentBet(this.table.getCurrentBet());
 						this.numOfRaises++;
 						raisePlayer = player.getPlayerID();
 						

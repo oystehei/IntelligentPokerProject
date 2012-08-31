@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 
 /**
- * Created by IntelliJ IDEA. hei
+ * Created by IntelliJ IDEA.
  * User: oye
  * Date: 26.08.11
  * Time: 16:20
@@ -291,85 +291,4 @@ public class CardRating {
         return power;
     }
 
-    
-    
-    
-    
-    //Testing of sorting methods
-    public static void main(String args[]){
-        Deck deck = new Deck();
-        CardRating cardRating = new CardRating();
-        
-        /*
-        deck.shuffleDeck();
-        ArrayList<Card> valueSort = cardRating.sortByValue(deck.getCards());
-        System.out.println("SortedByValue:");
-        for(Card card : valueSort){
-            System.out.println(card);
-        }
-        
-        
-        deck.buildDeck();
-        deck.shuffleDeck();
-        ArrayList<Card> suitSort = cardRating.sortBySuit(deck.getCards());
-        System.out.println("SortedBySuit:");
-        for(Card card : suitSort){
-            System.out.println(card);
-        }
-        
-        */
-
-        deck.buildDeck();
-        deck.shuffleDeck();
-        ArrayList<Card> suitAndValueSort = cardRating.sortBySuitAndValue(deck.getCards());
-        System.out.println("SortedBySuitAndValue:");
-        for(Card card : suitAndValueSort){
-            System.out.println(card);
-        }
-        
-
-        ArrayList<Card> testHand = new ArrayList<Card>();
-        testHand.add(new Card(Card.Value.TEN, Card.Suit.SPADES));
-        testHand.add(new Card(Card.Value.JACK, Card.Suit.SPADES));
-        testHand.add(new Card(Card.Value.QUEEN, Card.Suit.SPADES));
-        testHand.add(new Card(Card.Value.KING, Card.Suit.SPADES));
-        testHand.add(new Card(Card.Value.ACE, Card.Suit.SPADES));
-        testHand.add(new Card(Card.Value.ACE, Card.Suit.HEARTS));
-        testHand.add(new Card(Card.Value.TEN, Card.Suit.HEARTS));
-
-        /*
-        for(Card card : cardRating.sortBySuit(testHand)){
-            System.out.println(card);
-        }
-        System.out.println();
-        for(Card card : cardRating.sortByValue(testHand)){
-            System.out.println(card);
-        }
-        System.out.println();
-        for(Card card : cardRating.sortBySuitAndValue(testHand)){
-            System.out.println(card);
-        }
-        System.out.println();
-        ArrayList<ArrayList<Card>> vGroups = cardRating.genValueGroups(testHand);
-        for(ArrayList<Card> vGroup : vGroups){
-            for(Card card : vGroup){
-                System.out.println(card);
-            }
-        }
-        System.out.println();
-        ArrayList<ArrayList<Card>> sGroups = cardRating.genSuitGroups(testHand);
-        for(ArrayList<Card> sGroup : sGroups){
-            for(Card card : sGroup){
-                System.out.println(card);
-            }
-        } */
-        System.out.println();
-        int[] power = cardRating.calcCardsPower(testHand);
-        System.out.print("Power: [ ");
-        for(int val : power){
-            System.out.print(val+" ");
-        }
-        System.out.print("]");
-    }
 }
-

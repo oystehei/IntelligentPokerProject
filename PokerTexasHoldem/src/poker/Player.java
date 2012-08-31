@@ -102,7 +102,7 @@ public class Player {
 			
 			if(randNum == 1)
 				action = Action.FOLD;
-			else if (randNum ==2)
+			else if (randNum == 2)
 				action = Action.CALL;
 			else
 				action = Action.RAISE;
@@ -119,6 +119,46 @@ public class Player {
 		//Player is not allowed to fold if he was the last player to raise.
 		if(action == Action.FOLD && allowedToFold == false)
 			action = Action.CALL;
+		
+		return action;
+	}
+	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards){
+		
+		Action action = Action.CALL;
+		
+		
+		
+		if(this.type == PlayerType.DEFENSIVE){
+			
+			if(true)
+				action = Action.FOLD;
+			else
+				action = Action.CALL;
+			
+		}
+		else if(this.type == PlayerType.NORMAL){
+			
+			if(false)
+				action = Action.FOLD;
+			else if (false)
+				action = Action.CALL;
+			else
+				action = Action.RAISE;
+			
+		}
+		else if(this.type == PlayerType.AGGRESSIVE){
+			
+			if(false)
+				action = Action.RAISE;
+			else
+				action = Action.CALL;
+		}
+		
+		
+		//Player is not allowed to fold if he was the last player to raise.
+		if(action == Action.FOLD && allowedToFold == false)
+			action = Action.CALL;
+		
 		
 		return action;
 	}
