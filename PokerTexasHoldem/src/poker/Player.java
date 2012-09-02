@@ -11,6 +11,7 @@ public class Player {
 	public enum PlayerType{DEFENSIVE, NORMAL, AGGRESSIVE};
 	public enum Action{FOLD, CALL, RAISE};
 	private PlayerType type;
+	private int[] currentCardRating;
 	
 	/*
 	 * Creates a new Player instance with the specified ID, amount of money and playing style
@@ -22,6 +23,7 @@ public class Player {
 		this.type = type;
 		this.currentBet = 0;
 		this.wholeCards = new ArrayList<Card>();
+		this.setCurrentCardRating(new int[] {0,0});
 	}
 
 	
@@ -76,8 +78,24 @@ public class Player {
 		this.money += amount;
 	}
 	
+	public int[] getCurrentCardRating() {
+		return currentCardRating;
+	}
+
+	public void setCurrentCardRating(int[] currentCardRating) {
+		this.currentCardRating = currentCardRating;
+	}
+	
 	public String printHand(){
 		return this.wholeCards.get(0).toString() + " " + this.wholeCards.get(1).toString();
+		
+	}
+	
+	public void calculateCurrentRating(ArrayList<Card> cards){
+		System.out.println("");		
+		System.out.println("Spiller "+Integer.toString(this.playerID)+"'s totale hånd: "+cards.toString());		
+		CardRating rating = new CardRating();
+		this.currentCardRating = rating.calcCardsPower(cards);
 		
 	}
 	
@@ -129,26 +147,23 @@ public class Player {
 		ArrayList<Card> cards = new ArrayList<Card>();
 		cards.addAll(wholeCards);
 		cards.addAll(sharedCards);
+		calculateCurrentRating(cards);
 		
-		System.out.println(cards.toString());
-		
-		CardRating rating = new CardRating();
-		int[] cardsStrength = rating.calcCardsPower(cards);
-		
-		System.out.println(cardsStrength[0]);
+	
+		System.out.println("Spiller"+Integer.toString(getPlayerID())+" rating: "+currentCardRating[0]);
 		
 		if(this.type == PlayerType.DEFENSIVE){
 			
-			if(cardsStrength[0] < 3)
+			if(currentCardRating[0] < 3)
 				action = Action.FOLD;
 			else
 				action = Action.CALL;
 		}
 		else if(this.type == PlayerType.NORMAL){
 			
-			if(cardsStrength[0] < 2)
+			if(currentCardRating[0] < 2)
 				action = Action.FOLD;
-			else if (cardsStrength[0] >= 2 && cardsStrength[0] < 5)
+			else if (currentCardRating[0] >= 2 && currentCardRating[0] < 5)
 				action = Action.CALL;
 			else
 				action = Action.RAISE;
@@ -156,7 +171,7 @@ public class Player {
 		}
 		else if(this.type == PlayerType.AGGRESSIVE){
 			
-			if(cardsStrength[0] >= 4)
+			if(currentCardRating[0] >= 4)
 				action = Action.RAISE;
 			else
 				action = Action.CALL;
@@ -166,8 +181,6 @@ public class Player {
 		if(action == Action.FOLD && allowedToFold == false)
 			action = Action.CALL;
 		
-		
-		System.out.println(action.toString());
 		return action;
 	}
 

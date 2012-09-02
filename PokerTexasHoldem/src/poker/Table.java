@@ -196,15 +196,17 @@ public class Table {
 		this.sharedCards.add(getNextCard());
 		this.sharedCards.add(getNextCard());
 		
-		System.out.println(this.sharedCards.toString());
+		System.out.println("Sharedcards etter flop: "+this.sharedCards.toString());
 	}
 	
 	public void dealTurn(){
 		this.sharedCards.add(getNextCard());
+		System.out.println("Sharedcards etter turn: "+this.sharedCards.toString());
 	}
 	
 	public void dealRiver(){
 		this.sharedCards.add(getNextCard());
+		System.out.println("Sharedcards etter river: "+this.sharedCards.toString());
 	}
 	
 	/*

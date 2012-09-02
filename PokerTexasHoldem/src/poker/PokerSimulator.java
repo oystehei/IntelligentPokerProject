@@ -138,7 +138,7 @@ public class PokerSimulator {
 						this.numOfRaises++;
 						raisePlayer = player.getPlayerID();
 						
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " h¿ynet.");
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " høynet.");
 						
 					}
 				
@@ -238,7 +238,7 @@ public class PokerSimulator {
 						this.numOfRaises++;
 						raisePlayer = player;
 						
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " h¿ynet.");
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " høynet.");
 						
 					}
 				
@@ -256,16 +256,33 @@ public class PokerSimulator {
 		
 	}
 	
-	public void initShowdown(){
+	public void initiateShowdown(){
 		
-		Player winner = null;
-		
-		while(table.getActivePlayers().size() > 1)
-			for(Player player : table.getActivePlayers())
-				if(winner!=null && player.getCards())
-				winner = player;
-				if()
+		ArrayList<Player> winner = new ArrayList<Player>(); 
+		winner.add(table.getActivePlayers().get(0));
+		int highestRating = 0;
+		for(Player player : table.getActivePlayers()){
+			System.out.println("Spiller"+player.getPlayerID()+" viser "+player.getCards().toString()+" med en rating på: "+player.getCurrentCardRating()[0]+", og highcard:"+player.getCurrentCardRating()[1]);
+			if(highestRating < player.getCurrentCardRating()[0]){
+				winner.clear();
+				winner.add(player);
+				highestRating = player.getCurrentCardRating()[0];
+			}
+			else if(highestRating == player.getCurrentCardRating()[0]){
+				if(player.getCurrentCardRating()[1] > winner.get(0).getCurrentCardRating()[1]){
+					winner.clear();
+					winner.add(player);
+					highestRating = player.getCurrentCardRating()[0];
+				}
+				else if(player.getCurrentCardRating()[1] == winner.get(0).getCurrentCardRating()[1]){
+					winner.add(player);
+					highestRating = player.getCurrentCardRating()[0];
+				}
+			}	
 			
+		}
+		
+		table.getActivePlayers().retainAll(winner);
 	}
 	
 	public void printTable(){
@@ -273,7 +290,7 @@ public class PokerSimulator {
 		System.out.println("Runde nr.: " + Integer.toString(this.roundNumber));
 		
 		for(Player player: this.table.getPlayers()){
-			System.out.println("Spiller: " + Integer.toString(player.getPlayerID()) + " HŒnd: " + player.printHand());
+			System.out.println("Spiller: " + Integer.toString(player.getPlayerID()) + " Hånd: " + player.printHand());
 		}
 	}
 	
@@ -289,7 +306,7 @@ public class PokerSimulator {
 			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getLastWinner().getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
 		else {
 			System.out.println("Spillere fremdeles aktiv: " + pokerSim.table.printActivePlayers());
-			System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(pokerSim.table.getPotSize()));
+			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
 		}
 		
 		pokerSim.setNumOfRaises(0);
@@ -299,7 +316,7 @@ public class PokerSimulator {
 			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
 		else {
 			System.out.println("Spillere fremdeles aktiv etter flopp: " + pokerSim.table.printActivePlayers());
-			System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(pokerSim.table.getPotSize()));
+			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
 		}
 		
 		
@@ -310,7 +327,7 @@ public class PokerSimulator {
 			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
 		else {
 			System.out.println("Spillere fremdeles aktiv etter turn: " + pokerSim.table.printActivePlayers());
-			System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(pokerSim.table.getPotSize()));
+			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
 		}
 		
 		
@@ -321,14 +338,23 @@ public class PokerSimulator {
 			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
 		else {
 			System.out.println("Spillere fremdeles aktiv etter river: " + pokerSim.table.printActivePlayers());
-			System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(pokerSim.table.getPotSize()));
+			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
 		}
-		
-		
-		
-		
-		
-				
+		System.out.println("");
+		System.out.println("Sharedcards er: "+pokerSim.table.getSharedCards().toString());
+		pokerSim.initiateShowdown();
+		System.out.println("Runden er over!");
+		if(pokerSim.table.getActivePlayers().size()>1){
+			System.out.print("Det ble uavgjort mellom spillerne ");
+			for(Player player : pokerSim.table.getActivePlayers()){
+				System.out.print(player.getPlayerID()+" og ");
+			}
+			System.out.println(" med hånden :"+pokerSim.table.getActivePlayers().get(0).getCards().toString());
+		}	
+		else{
+			System.out.println("Vinneren er: Spiller"+pokerSim.table.getActivePlayers().get(0).getPlayerID()+" med hånden :"+pokerSim.table.getActivePlayers().get(0).getCards().toString());
+
+		}
 	}
 
 }
