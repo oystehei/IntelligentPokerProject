@@ -2,8 +2,6 @@ package poker;
 
 import java.util.ArrayList;
 
-import poker.Card.Suit;
-import poker.Card.Value;
 import poker.Player.Action;
 import poker.Player.PlayerType;
 
@@ -58,7 +56,7 @@ public class PokerSimulator {
 	}
 	
 	
-	public boolean initiatePreFlopBetting(){
+	public boolean initiatePreFlopBetting(boolean log){
 		
 		boolean bettingEnded = false;
 		int raisePlayer = -1;	//ID of the player with the latest raise
@@ -79,7 +77,8 @@ public class PokerSimulator {
 										
 					this.table.getActivePlayers().remove(player);
 					
-					System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " kastet seg.");
+					if(log)
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " kastet seg.");
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
@@ -101,7 +100,9 @@ public class PokerSimulator {
 					player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 					this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 					player.setCurrentBet(this.table.getCurrentBet());
-					System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
+					
+					if(log)
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 					
 				}
 				
@@ -119,9 +120,9 @@ public class PokerSimulator {
 						player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 						this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 						player.setCurrentBet(this.table.getCurrentBet());
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 						
-						
+						if(log)
+							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 						
 					}
 					else{
@@ -140,7 +141,8 @@ public class PokerSimulator {
 						this.numOfRaises++;
 						raisePlayer = player.getPlayerID();
 						
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " høynet.");
+						if(log)
+							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " h¿ynet.");
 						
 					}
 				
@@ -159,7 +161,7 @@ public class PokerSimulator {
 	/*
 	 * Method for initiating betting between players in after the flop, turn and river cards
 	 */
-	public boolean initiateBetting(){
+	public boolean initiateBetting(boolean log){
 		
 		boolean bettingEnded = false;
 		Player raisePlayer = null;	//ID of the player with the latest raise
@@ -186,7 +188,8 @@ public class PokerSimulator {
 										
 					this.table.getActivePlayers().remove(player);
 					
-					System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " kastet seg.");
+					if(log)
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " kastet seg.");
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
@@ -208,7 +211,9 @@ public class PokerSimulator {
 					player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 					this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 					player.setCurrentBet(this.table.getCurrentBet());
-					System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
+					
+					if(log)
+						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 				}
 				
 				else if(playerAction == Action.RAISE){
@@ -225,9 +230,9 @@ public class PokerSimulator {
 						player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 						this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 						player.setCurrentBet(this.table.getCurrentBet());
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 						
-						
+						if(log)
+							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
 						
 					}
 					else{
@@ -246,7 +251,8 @@ public class PokerSimulator {
 						this.numOfRaises++;
 						raisePlayer = player;
 						
-						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " høynet.");
+						if(log)
+							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " h¿ynet.");
 						
 					}
 				
@@ -264,13 +270,16 @@ public class PokerSimulator {
 		
 	}
 	
-	public void initiateShowdown(){
+	public void initiateShowdown(boolean log){
 		
 		ArrayList<Player> winner = new ArrayList<Player>(); 
 		winner.add(table.getActivePlayers().get(0));
 		int highestRating = 0;
 		for(Player player : table.getActivePlayers()){
-			System.out.println("Spiller"+player.getPlayerID()+" viser "+player.getCards().toString()+" med en rating på: "+player.getCurrentCardRating()[0]+", og highcard:"+player.getCurrentCardRating()[1]);
+			
+			if(log)
+				System.out.println("Spiller"+player.getPlayerID()+" viser "+player.getCards().toString()+" med en rating på: "+player.getCurrentCardRating()[0]+", og highcard:"+player.getCurrentCardRating()[1]);
+			
 			if(highestRating < player.getCurrentCardRating()[0]){
 				winner.clear();
 				winner.add(player);
@@ -314,71 +323,106 @@ public class PokerSimulator {
 		
 		this.startNewRound();
 		
-		this.printTable();
+		if(log)
+			this.printTable();
 		
 		//Initiate pre-flop betting
+<<<<<<< HEAD
 		if(this.initiatePreFlopBetting()){
 			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+=======
+		if(this.initiatePreFlopBetting(log)){
+			if(log)
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+>>>>>>> Lar loggingen vÃ¦re frivillig
 			return true;
 		}
 		else {
-			System.out.println("Spillere fremdeles aktiv: " + this.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
+			if(log) {
+				System.out.println();
+				System.out.println("Spillere fremdeles aktiv: " + this.table.printActivePlayers());
+				System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(this.table.getPotSize()));
+			}
 		}
 		
+		
+		//Deal flop and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealFlop();
-		//Initiate betting after flop
-		if(this.initiateBetting()){
-			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+		if(this.initiateBetting(log)){
+			if(log)
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}	
 		else {
-			System.out.println("Spillere fremdeles aktiv etter flopp: " + this.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
+			if(log) {
+				System.out.println();
+				System.out.println("Spillere fremdeles aktiv: " + this.table.printActivePlayers());
+				System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(this.table.getPotSize()));
+			}
 		}
 		
 		
+		//Deal turn and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealTurn();
-		//Initiate betting after turn
-		if(this.initiateBetting()){
-			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+		if(this.initiateBetting(log)){
+			if(log)
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}	
 		else {
-			System.out.println("Spillere fremdeles aktiv etter turn: " + this.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
-		}
-		
-		//Initiate betting after river
-		if(this.initiateBetting()){
-			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
-			return true;
-		}	
-		else {
-			System.out.println("Spillere fremdeles aktiv etter river: " + this.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
-		}
-
-		System.out.println("Sharedcards er: "+this.table.getSharedCards().toString());
-		this.initiateShowdown();
-		
-		System.out.println("Runden er over!");
-		if(this.table.getActivePlayers().size() > 1){
-			System.out.print("Det ble uavgjort mellom spillerne ");
-			for(Player player : this.table.getActivePlayers()){
-				System.out.print(player.getPlayerID()+" og ");
+			if(log) {
+				System.out.println();
+				System.out.println("Spillere fremdeles aktiv: " + this.table.printActivePlayers());
+				System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(this.table.getPotSize()));
 			}
+		}
+		
+		//Deal river and initiate betting
+		this.setNumOfRaises(0);
+		this.table.dealRiver();
+		if(this.initiateBetting(log)){
+			if(log)
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+			return true;
+		}	
+		else {
+			if(log) {
+				System.out.println();
+				System.out.println("Spillere fremdeles aktiv: " + this.table.printActivePlayers());
+				System.out.println("St¿rrelsen pŒ potten: " + Integer.toString(this.table.getPotSize()));
+			}
+		}
+		if(log)
+			System.out.println("Sharedcards er: "+this.table.getSharedCards().toString());
+		this.initiateShowdown(log);
+		
+		if(log)
+			System.out.println("Runden er over!");
+		
+		if(log) {
+			if(this.table.getActivePlayers().size() > 1){
+				System.out.println("Det ble uavgjort mellom spillerne ");
+				for(Player player : this.table.getActivePlayers()){
+					System.out.print(player.getPlayerID()+" og ");
+				}
+				System.out.print(" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
+			}	
+			else{
+				System.out.println("Vinneren er: Spiller"+this.table.getActivePlayers().get(0).getPlayerID()+" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
+			}
+<<<<<<< HEAD
 			System.out.println(" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
 		}	
 		else{
 			System.out.println("Vinneren er: Spiller"+this.table.getActivePlayers().get(0).getPlayerID()+" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
 			
+=======
+>>>>>>> Lar loggingen vÃ¦re frivillig
 		}
 		this.table.endRound(this.table.getActivePlayers());
 		return true;
-		
 	}
 	
 	public void printMoney(){
@@ -393,7 +437,7 @@ public class PokerSimulator {
 	public static void main(String args[]){
 		
 		PokerSimulator pokerSim = new PokerSimulator(6, 2000, 50, 100, 50, 2);
-		pokerSim.playRound(true);
+		pokerSim.playRound(false);
 		pokerSim.printMoney();
 		
 		
