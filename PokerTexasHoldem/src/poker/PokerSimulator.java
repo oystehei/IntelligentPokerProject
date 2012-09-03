@@ -83,7 +83,7 @@ public class PokerSimulator {
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
-						this.table.endRound(this.table.getActivePlayers().get(0));
+						this.table.endRound(this.table.getActivePlayers());
 						return true;
 					}
 						
@@ -190,7 +190,7 @@ public class PokerSimulator {
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
-						this.table.endRound(this.table.getActivePlayers().get(0));
+						this.table.endRound(this.table.getActivePlayers());
 						return true;
 					}
 						
@@ -318,7 +318,7 @@ public class PokerSimulator {
 		
 		//Initiate pre-flop betting
 		if(this.initiatePreFlopBetting()){
-			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}
 		else {
@@ -374,9 +374,9 @@ public class PokerSimulator {
 		}	
 		else{
 			System.out.println("Vinneren er: Spiller"+this.table.getActivePlayers().get(0).getPlayerID()+" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
-
+			
 		}
-		
+		this.table.endRound(this.table.getActivePlayers());
 		return true;
 		
 	}

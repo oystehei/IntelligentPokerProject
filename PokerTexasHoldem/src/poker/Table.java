@@ -14,7 +14,7 @@ public class Table {
 	private int bigBlindAmount;	//The amount of the big blind
 	private int currentBet;	//The amount of the current bet
 	private Deck deck;	//The deck on the table
-	private Player lastWinner;	//The player who won the last round
+	private ArrayList<Player> lastWinners;	//The player who won the last round
 	
 	public Table(){
 		this.potSize = 0;
@@ -123,13 +123,13 @@ public class Table {
 	}
 	
 	
-	public Player getLastWinner() {
-		return lastWinner;
+	public ArrayList<Player> getLastWinner() {
+		return lastWinners;
 	}
 
 
-	public void setLastWinner(Player lastWinner) {
-		this.lastWinner = lastWinner;
+	public void setLastWinner(ArrayList<Player> lastWinners) {
+		this.lastWinners = lastWinners;
 	}
 
 
@@ -182,13 +182,19 @@ public class Table {
 	/*
 	 * Only one player left, give him the pot and reset the table
 	 */
-	public void endRound(Player winner){
-		this.lastWinner = winner;
-		winner.addMoney(getPotSize());
+	public void endRound(ArrayList<Player> winners){
+		this.lastWinners = winners;
+		if(winners.size()>1){
+			for (Player player : winners) {
+				player.addMoney(getPotSize()/winners.size());
+			}
+		}
+		else{
+			winners.get(0).addMoney(getPotSize());
+		}
 		this.activePlayers.clear();
 		this.sharedCards.clear();
 		this.deck = new Deck();
-		
 	}
 	
 	public void dealFlop(){
