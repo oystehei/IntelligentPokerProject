@@ -50,6 +50,10 @@ public class Player {
 		return wholeCards;
 	}
 	
+	public void resetCards() {
+		this.wholeCards.clear();
+	}
+	
 
 	public int getCurrentBet() {
 		return currentBet;
@@ -91,9 +95,11 @@ public class Player {
 		
 	}
 	
-	public void calculateCurrentRating(ArrayList<Card> cards){
-		System.out.println("");		
-		System.out.println("Spiller "+Integer.toString(this.playerID)+"'s totale hånd: "+cards.toString());		
+	public void calculateCurrentRating(ArrayList<Card> cards, boolean log){
+		if(log) {
+			System.out.println("");		
+			System.out.println("Spiller "+Integer.toString(this.playerID)+"'s totale hånd: "+cards.toString());	
+		}
 		CardRating rating = new CardRating();
 		this.currentCardRating = rating.calcCardsPower(cards);
 		
@@ -140,17 +146,17 @@ public class Player {
 		
 		return action;
 	}
-	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards){
+	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log){
 		
 		Action action = Action.CALL;
 		
 		ArrayList<Card> cards = new ArrayList<Card>();
 		cards.addAll(wholeCards);
 		cards.addAll(sharedCards);
-		calculateCurrentRating(cards);
+		calculateCurrentRating(cards, log);
 		
-	
-		System.out.println("Spiller"+Integer.toString(getPlayerID())+" rating: "+currentCardRating[0]);
+		if(log)
+			System.out.println("Spiller"+Integer.toString(getPlayerID())+" rating: "+currentCardRating[0]);
 		
 		if(this.type == PlayerType.DEFENSIVE){
 			

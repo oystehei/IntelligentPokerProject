@@ -194,25 +194,35 @@ public class Table {
 		}
 		this.activePlayers.clear();
 		this.sharedCards.clear();
+		
+		for(Player player: this.getPlayers()){
+			player.resetCards();
+		}
+		
 		this.deck = new Deck();
 	}
 	
-	public void dealFlop(){
+	public void dealFlop(boolean log){
 		this.sharedCards.add(getNextCard());
 		this.sharedCards.add(getNextCard());
 		this.sharedCards.add(getNextCard());
 		
-		System.out.println("Sharedcards etter flop: "+this.sharedCards.toString());
+		if(log)
+			System.out.println("Sharedcards etter flop: "+this.sharedCards.toString());
 	}
 	
-	public void dealTurn(){
+	public void dealTurn(boolean log){
 		this.sharedCards.add(getNextCard());
-		System.out.println("Sharedcards etter turn: "+this.sharedCards.toString());
+		
+		if(log)
+			System.out.println("Sharedcards etter turn: "+this.sharedCards.toString());
 	}
 	
-	public void dealRiver(){
+	public void dealRiver(boolean log){
 		this.sharedCards.add(getNextCard());
-		System.out.println("Sharedcards etter river: "+this.sharedCards.toString());
+		
+		if(log)
+			System.out.println("Sharedcards etter river: "+this.sharedCards.toString());
 	}
 	
 	/*

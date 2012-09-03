@@ -182,7 +182,7 @@ public class PokerSimulator {
 				
 				boolean allowedToFold = !(player == raisePlayer || raisePlayer == null);
 				
-				Action playerAction = player.decideAction(allowedToFold, this.table.getSharedCards());
+				Action playerAction = player.decideAction(allowedToFold, this.table.getSharedCards(), log);
 												
 				if(playerAction == Action.FOLD){
 										
@@ -327,14 +327,9 @@ public class PokerSimulator {
 			this.printTable();
 		
 		//Initiate pre-flop betting
-<<<<<<< HEAD
-		if(this.initiatePreFlopBetting()){
-			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
-=======
 		if(this.initiatePreFlopBetting(log)){
 			if(log)
-				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
->>>>>>> Lar loggingen v√¶re frivillig
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}
 		else {
@@ -348,7 +343,7 @@ public class PokerSimulator {
 		
 		//Deal flop and initiate betting
 		this.setNumOfRaises(0);
-		this.table.dealFlop();
+		this.table.dealFlop(log);
 		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
@@ -365,7 +360,7 @@ public class PokerSimulator {
 		
 		//Deal turn and initiate betting
 		this.setNumOfRaises(0);
-		this.table.dealTurn();
+		this.table.dealTurn(log);
 		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
@@ -381,7 +376,7 @@ public class PokerSimulator {
 		
 		//Deal river and initiate betting
 		this.setNumOfRaises(0);
-		this.table.dealRiver();
+		this.table.dealRiver(log);
 		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
@@ -412,15 +407,8 @@ public class PokerSimulator {
 			else{
 				System.out.println("Vinneren er: Spiller"+this.table.getActivePlayers().get(0).getPlayerID()+" med hÂnden :"+this.table.getActivePlayers().get(0).getCards().toString());
 			}
-<<<<<<< HEAD
-			System.out.println(" med hÂnden :"+this.table.getActivePlayers().get(0).getCards().toString());
-		}	
-		else{
-			System.out.println("Vinneren er: Spiller"+this.table.getActivePlayers().get(0).getPlayerID()+" med hÂnden :"+this.table.getActivePlayers().get(0).getCards().toString());
-			
-=======
->>>>>>> Lar loggingen v√¶re frivillig
 		}
+
 		this.table.endRound(this.table.getActivePlayers());
 		return true;
 	}
@@ -436,8 +424,12 @@ public class PokerSimulator {
 	
 	public static void main(String args[]){
 		
-		PokerSimulator pokerSim = new PokerSimulator(6, 2000, 50, 100, 50, 2);
-		pokerSim.playRound(false);
+		PokerSimulator pokerSim = new PokerSimulator(10, 2000, 50, 100, 50, 2);
+		
+		for(int i=0; i<1000; i++){
+			pokerSim.playRound(false);
+		}
+		
 		pokerSim.printMoney();
 		
 		
