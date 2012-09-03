@@ -93,7 +93,7 @@ public class PokerSimulator {
 					/*
 					 * If the player who made the last raise calls, the betting round is over
 					 */
-					if(player.getPlayerID() == raisePlayer){
+					if(player.getPlayerID() == raisePlayer || (player.getPlayerID() == this.table.getBigBlindID() && raisePlayer == -1)){
 						bettingEnded = true;
 						break;
 					}
@@ -111,7 +111,7 @@ public class PokerSimulator {
 						/*
 						 * If the player who made the last raise calls, the betting round is over
 						 */
-						if(player.getPlayerID() == raisePlayer){
+						if(player.getPlayerID() == raisePlayer || (player.getPlayerID() == this.table.getBigBlindID() && raisePlayer == -1)){
 							bettingEnded = true;
 							break;
 						}
@@ -171,6 +171,12 @@ public class PokerSimulator {
 			
 						
 			for(Player player: activePlayers){
+				
+				
+				if(player == raisePlayer){
+					bettingEnded = true;
+					break;
+				}
 				
 				boolean allowedToFold = !(player == raisePlayer || raisePlayer == null);
 				
@@ -300,74 +306,112 @@ public class PokerSimulator {
 		System.out.println("Runde nr.: " + Integer.toString(this.roundNumber));
 		
 		for(Player player: this.table.getPlayers()){
-			System.out.println("Spiller: " + Integer.toString(player.getPlayerID()) + " Hånd: " + player.printHand());
+			System.out.println("Spiller: " + Integer.toString(player.getPlayerID()) + " HŒnd: " + player.printHand());
 		}
+	}
+	
+	public boolean playRound(boolean log){
+		
+		this.startNewRound();
+		
+		this.printTable();
+		
+		//Initiate pre-flop betting
+		if(this.initiatePreFlopBetting()){
+			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinner().getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+			return true;
+		}
+		else {
+			System.out.println("Spillere fremdeles aktiv: " + this.table.printActivePlayers());
+			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
+		}
+		
+		this.setNumOfRaises(0);
+		this.table.dealFlop();
+		//Initiate betting after flop
+		if(this.initiateBetting()){
+			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+			return true;
+		}	
+		else {
+			System.out.println("Spillere fremdeles aktiv etter flopp: " + this.table.printActivePlayers());
+			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
+		}
+		
+		
+		this.setNumOfRaises(0);
+		this.table.dealTurn();
+		//Initiate betting after turn
+		if(this.initiateBetting()){
+			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+			return true;
+		}	
+		else {
+			System.out.println("Spillere fremdeles aktiv etter turn: " + this.table.printActivePlayers());
+			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
+		}
+		
+		
+<<<<<<< HEAD
+		pokerSim.setNumOfRaises(0);
+		pokerSim.table.dealRiver();
+
+=======
+		this.setNumOfRaises(0);
+		this.table.dealRiver();
+>>>>>>> Fikset litt pÃ¥ diverse
+		//Initiate betting after river
+		if(this.initiateBetting()){
+			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+			return true;
+		}	
+		else {
+			System.out.println("Spillere fremdeles aktiv etter river: " + this.table.printActivePlayers());
+			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
+		}
+
+		System.out.println("");
+<<<<<<< HEAD
+		System.out.println("Sharedcards er: "+pokerSim.table.getSharedCards().toString());
+
+		pokerSim.initiateShowdown();
+=======
+		System.out.println("Sharedcards er: "+this.table.getSharedCards().toString());
+		this.initiateShowdown();
+>>>>>>> Fikset litt pÃ¥ diverse
+		System.out.println("Runden er over!");
+		if(this.table.getActivePlayers().size()>1){
+			System.out.print("Det ble uavgjort mellom spillerne ");
+			for(Player player : this.table.getActivePlayers()){
+				System.out.print(player.getPlayerID()+" og ");
+			}
+			System.out.println(" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
+		}	
+		else{
+			System.out.println("Vinneren er: Spiller"+this.table.getActivePlayers().get(0).getPlayerID()+" med hånden :"+this.table.getActivePlayers().get(0).getCards().toString());
+
+		}
+		
+		return true;
+		
+	}
+	
+	public void printMoney(){
+		
+		for(Player player: this.table.getPlayers()){
+			System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " har " + Integer.toString(player.getMoney()) + " kr");
+		}
+		
 	}
 	
 	
 	public static void main(String args[]){
 		
 		PokerSimulator pokerSim = new PokerSimulator(6, 2000, 50, 100, 50, 2);
-		pokerSim.startNewRound();
-		pokerSim.printTable();
-		
-		//Initiate pre-flop betting
-		if(pokerSim.initiatePreFlopBetting())
-			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getLastWinner().getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
-		else {
-			System.out.println("Spillere fremdeles aktiv: " + pokerSim.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
-		}
-		
-		pokerSim.setNumOfRaises(0);
-		pokerSim.table.dealFlop();
-		//Initiate betting after flop
-		if(pokerSim.initiateBetting())
-			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
-		else {
-			System.out.println("Spillere fremdeles aktiv etter flopp: " + pokerSim.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
-		}
+		pokerSim.playRound(true);
+		pokerSim.printMoney();
 		
 		
-		pokerSim.setNumOfRaises(0);
-		pokerSim.table.dealTurn();
-		//Initiate betting after turn
-		if(pokerSim.initiateBetting())
-			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
-		else {
-			System.out.println("Spillere fremdeles aktiv etter turn: " + pokerSim.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
-		}
-		
-		
-		pokerSim.setNumOfRaises(0);
-		pokerSim.table.dealRiver();
-
-		//Initiate betting after river
-		if(pokerSim.initiateBetting())
-			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
-		else {
-			System.out.println("Spillere fremdeles aktiv etter river: " + pokerSim.table.printActivePlayers());
-			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
-		}
-
-		System.out.println("");
-		System.out.println("Sharedcards er: "+pokerSim.table.getSharedCards().toString());
-
-		pokerSim.initiateShowdown();
-		System.out.println("Runden er over!");
-		if(pokerSim.table.getActivePlayers().size()>1){
-			System.out.print("Det ble uavgjort mellom spillerne ");
-			for(Player player : pokerSim.table.getActivePlayers()){
-				System.out.print(player.getPlayerID()+" og ");
-			}
-			System.out.println(" med hånden :"+pokerSim.table.getActivePlayers().get(0).getCards().toString());
-		}	
-		else{
-			System.out.println("Vinneren er: Spiller"+pokerSim.table.getActivePlayers().get(0).getPlayerID()+" med hånden :"+pokerSim.table.getActivePlayers().get(0).getCards().toString());
-
-		}
 	}
 
 }
