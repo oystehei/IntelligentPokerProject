@@ -2,6 +2,8 @@ package poker;
 
 import java.util.ArrayList;
 
+import poker.Card.Suit;
+import poker.Card.Value;
 import poker.Player.Action;
 import poker.Player.PlayerType;
 
@@ -269,22 +271,30 @@ public class PokerSimulator {
 				highestRating = player.getCurrentCardRating()[0];
 			}
 			else if(highestRating == player.getCurrentCardRating()[0]){
-				if(player.getCurrentCardRating()[1] > winner.get(0).getCurrentCardRating()[1]){
-					winner.clear();
-					winner.add(player);
-					highestRating = player.getCurrentCardRating()[0];
+				boolean tie = true;
+				for (int i = 1; i < player.getCurrentCardRating().length; i++) {
+					if(player.getCurrentCardRating()[i] > winner.get(0).getCurrentCardRating()[i]){
+						winner.clear();
+						winner.add(player);
+						highestRating = player.getCurrentCardRating()[0];
+						tie = false;
+						break;
+					}
+					else if(player.getCurrentCardRating()[i] < winner.get(0).getCurrentCardRating()[i]){
+						tie = false;
+						break;
+					}
+					
 				}
-				else if(player.getCurrentCardRating()[1] == winner.get(0).getCurrentCardRating()[1]){
+				if(tie){
 					winner.add(player);
-					highestRating = player.getCurrentCardRating()[0];
 				}
+				
 			}	
-			
 		}
-		
 		table.getActivePlayers().retainAll(winner);
 	}
-	
+
 	public void printTable(){
 		System.out.println("Antall spillere: " + Integer.toString(this.table.getPlayers().size()));
 		System.out.println("Runde nr.: " + Integer.toString(this.roundNumber));
@@ -333,6 +343,7 @@ public class PokerSimulator {
 		
 		pokerSim.setNumOfRaises(0);
 		pokerSim.table.dealRiver();
+
 		//Initiate betting after river
 		if(pokerSim.initiateBetting())
 			System.out.println("Runden er over, Spiller" + Integer.toString(pokerSim.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(pokerSim.table.getPotSize()) + "kr");
@@ -340,8 +351,10 @@ public class PokerSimulator {
 			System.out.println("Spillere fremdeles aktiv etter river: " + pokerSim.table.printActivePlayers());
 			System.out.println("Størrelsen på potten: " + Integer.toString(pokerSim.table.getPotSize()));
 		}
+
 		System.out.println("");
 		System.out.println("Sharedcards er: "+pokerSim.table.getSharedCards().toString());
+
 		pokerSim.initiateShowdown();
 		System.out.println("Runden er over!");
 		if(pokerSim.table.getActivePlayers().size()>1){
