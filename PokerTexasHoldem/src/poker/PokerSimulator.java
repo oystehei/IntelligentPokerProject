@@ -351,15 +351,6 @@ public class PokerSimulator {
 			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
 		}
 		
-		
-<<<<<<< HEAD
-		pokerSim.setNumOfRaises(0);
-		pokerSim.table.dealRiver();
-
-=======
-		this.setNumOfRaises(0);
-		this.table.dealRiver();
->>>>>>> Fikset litt pÃ¥ diverse
 		//Initiate betting after river
 		if(this.initiateBetting()){
 			System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
@@ -370,17 +361,11 @@ public class PokerSimulator {
 			System.out.println("Størrelsen på potten: " + Integer.toString(this.table.getPotSize()));
 		}
 
-		System.out.println("");
-<<<<<<< HEAD
-		System.out.println("Sharedcards er: "+pokerSim.table.getSharedCards().toString());
-
-		pokerSim.initiateShowdown();
-=======
 		System.out.println("Sharedcards er: "+this.table.getSharedCards().toString());
 		this.initiateShowdown();
->>>>>>> Fikset litt pÃ¥ diverse
+		
 		System.out.println("Runden er over!");
-		if(this.table.getActivePlayers().size()>1){
+		if(this.table.getActivePlayers().size() > 1){
 			System.out.print("Det ble uavgjort mellom spillerne ");
 			for(Player player : this.table.getActivePlayers()){
 				System.out.print(player.getPlayerID()+" og ");
