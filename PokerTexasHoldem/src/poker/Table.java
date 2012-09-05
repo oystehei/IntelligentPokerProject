@@ -60,6 +60,11 @@ public class Table {
 		return activePlayers;
 	}
 	
+	public void setActivePlayers(ArrayList<Player> activePlayers){
+		this.activePlayers.clear();
+		this.activePlayers.addAll(activePlayers);
+	}
+	
 	public int getSmallBlindID() {
 		return smallBlindID;
 	}
@@ -259,6 +264,52 @@ public class Table {
 		}
 		
 		return active;
+	}
+	
+	
+public void initiateShowdown(boolean log){
+		
+		ArrayList<Player> winner = new ArrayList<Player>(); 
+		winner.add(this.getActivePlayers().get(0));
+		int highestRating = 0;
+		for(Player player : this.getActivePlayers()){
+			
+			ArrayList<Card> cards = new ArrayList<Card>();
+			cards.addAll(player.getCards());
+			cards.addAll(sharedCards);
+			player.calculateCurrentRating(cards, false);
+						
+			if(log)
+				System.out.println("Spiller"+player.getPlayerID()+" viser "+player.getCards().toString()+" med en rating på: "+player.getCurrentCardRating()[0]+", og highcard:"+player.getCurrentCardRating()[1]);
+			
+			if(highestRating < player.getCurrentCardRating()[0]){
+				winner.clear();
+				winner.add(player);
+				highestRating = player.getCurrentCardRating()[0];
+			}
+			else if(highestRating == player.getCurrentCardRating()[0]){
+				boolean tie = true;
+				for (int i = 1; i < player.getCurrentCardRating().length; i++) {
+					if(player.getCurrentCardRating()[i] > winner.get(0).getCurrentCardRating()[i]){
+						winner.clear();
+						winner.add(player);
+						highestRating = player.getCurrentCardRating()[0];
+						tie = false;
+						break;
+					}
+					else if(player.getCurrentCardRating()[i] < winner.get(0).getCurrentCardRating()[i]){
+						tie = false;
+						break;
+					}
+					
+				}
+				if(tie){
+					winner.add(player);
+				}
+				
+			}	
+		}
+		this.getActivePlayers().retainAll(winner);
 	}
 	
 	
