@@ -228,8 +228,28 @@ public class RolloutSimulator {
         reader.close();
 	}
 	
-	public void getProb(EqClass eqClass, int numOfPlayers){
+	/*
+	 * Returns the probability to win with a certain hand against a certain number of players.
+	 * Accepts any legal combination of cards, and 2-10 players(Giving anything else will crash the system)
+	 */
+	public double getProb(ArrayList<Card> cards, int numOfPlayers){
 		
+		int firstCard = cards.get(0).getValue().ordinal()+2;
+		int secondCard = cards.get(1).getValue().ordinal()+2;
+		
+		boolean suited = cards.get(0).getSuit() == cards.get(1).getSuit();
+		
+		EqClass eqClass;
+		
+		//Make sure the cards are sorted on value
+		if(firstCard > secondCard) {
+			eqClass = new EqClass(new int[]{secondCard, firstCard}, suited);
+		}
+		else {
+			eqClass = new EqClass(new int[]{firstCard, secondCard}, suited);
+		}
+		
+		return this.rolloutTable.get(eqClass)[numOfPlayers-2];
 	}
 	
 	public static void main(String [] args){
@@ -243,20 +263,22 @@ public class RolloutSimulator {
 			e.printStackTrace();
 		}
 		
-		EqClass suitedAceKing = rSim.new EqClass(new int[]{13, 14}, true);
-		EqClass unsuitedAceKing = rSim.new EqClass(new int[]{14, 14}, false);
-		EqClass unsuitedTwoSeven = rSim.new EqClass(new int[]{2, 7}, false);
-		EqClass pocketKings = rSim.new EqClass(new int[]{13, 13}, false);
-		EqClass pocketAces = rSim.new EqClass(new int[]{14, 14}, false);
+		
+		//Example of getting prob for a given combination of cards
+		System.out.println("Prob when playing against 9 others:");
+		
+		ArrayList<Card> wholeCards = new ArrayList<Card>();
+		wholeCards.add(new Card(Value.ACE, Suit.SPADES));
+		wholeCards.add(new Card(Value.KING, Suit.SPADES));
+		
+		ArrayList<Card> wholeCards2 = new ArrayList<Card>();
+		wholeCards2.add(new Card(Value.ACE, Suit.DIAMONDS));
+		wholeCards2.add(new Card(Value.ACE, Suit.CLUBS));
 		
 		
-		System.out.println("Some select probs when playing head to head:");
+		System.out.println("Suited A K: " + rSim.getProb(wholeCards, 10));
+		System.out.println("Pocket A: " + rSim.getProb(wholeCards2, 10));
 		
-		System.out.println("Suited A K: " + rSim.rolloutTable.get(suitedAceKing)[0]);
-		System.out.println("Unsuited A K: " + rSim.rolloutTable.get(unsuitedAceKing)[0]);
-		System.out.println("Unsuited 2 7: " + rSim.rolloutTable.get(unsuitedTwoSeven)[0]);
-		System.out.println("Pocket K: " + rSim.rolloutTable.get(pocketKings)[0]);
-		System.out.println("Pocket A: " + rSim.rolloutTable.get(pocketAces)[0]);
 		
 		
 	}
