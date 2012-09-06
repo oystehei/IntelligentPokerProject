@@ -1,7 +1,9 @@
 package poker;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,14 +16,29 @@ import poker.Player.PlayerType;
 public class RolloutSimulator {
 	
 	
-	private class EqClass{
+	public class EqClass{
 		
-		int[] eqNum;
-		boolean suited;
+		public int[] eqNum;
+		public boolean suited;
 		
 		public EqClass(int[] eqNum, boolean suited){
 			this.eqNum= eqNum;
 			this.suited = suited;
+		}
+		
+		@Override
+		public int hashCode(){
+			return (this.eqNum[0] * 31) ^ this.eqNum[1];
+		}
+		
+		@Override
+		public boolean equals(Object obj){
+			if(obj instanceof EqClass) {
+				EqClass eqClass = (EqClass) obj;
+				return (this.eqNum[0] == eqClass.eqNum[0] && this.eqNum[1] == eqClass.eqNum[1] && this.suited == eqClass.suited);
+			}
+			else
+				return false;
 		}
 		
 	}
@@ -33,21 +50,14 @@ public class RolloutSimulator {
 	public RolloutSimulator(){
 		this.rolloutTable = new HashMap<EqClass, double[]>();
 		this.table = new Table();
-		/*
-		for(int i=2; i<15; i++){
-			for(int j=2; j<15; j++){
-				
-				EqClass eqClass = new EqClass(new int[]{i,j}, false);
-				this.rolloutTable.put(eqClass, new double []{0.15, 0.12}); 
-			}
-		}
-		*/
-		
 	}
 	
 	public void fillTable(){
+		
+		long startTime = System.currentTimeMillis();
+		
 		for(int i=2; i<15; i++){
-			for(int j=2; j<15; j++){
+			for(int j=i; j<15; j++){
 				EqClass suited = new EqClass(new int[]{i, j}, true);
 				EqClass unsuited = new EqClass(new int[]{i, j}, false);
 				if(i==j)
@@ -60,6 +70,8 @@ public class RolloutSimulator {
 			}
 		}
 		
+		long endTime = System.currentTimeMillis();
+		System.out.println((endTime - startTime)/1000 + " s");
 	}
 	
 	/*
@@ -89,16 +101,11 @@ public class RolloutSimulator {
 				
 				int result = doRollout(wholeCards, i);
 				
-				//System.out.println(result);
-				
 				if(result == 1)
 					wins++;
 				else if(result == 0)
 					ties++;
 			}
-			
-			System.out.println("Wins: " + wins);
-			System.out.println("Ties: " + ties);
 			
 			winProb[i-2] = (wins + (ties/2))/10000;
 		}
@@ -156,12 +163,12 @@ public class RolloutSimulator {
 	
 	public void writeToFile() throws IOException{
 		File f = new File("probs.txt");
-        
+		
         FileWriter fwriter = new FileWriter(f);
         BufferedWriter writer = new BufferedWriter(fwriter);
         writer.write("Cards " + "Suited " + "Num pla. " + "Prob" +"\n");
-        for (int i = 0; i < 13; i++) {
-        	for (int j = 0; j < 13; j++) {
+        for (int i = 2; i < 15; i++) {
+        	for (int j = i; j < 15; j++) {
         		for (int k = 2; k < 11; k++) {
                     if(i == j)                    	
                     	writer.write(i + " " + j + " " + 0 + " " + k + " " + this.rolloutTable.get(new EqClass(new int[]{i, j}, false))[k-2] + "\n");
@@ -171,24 +178,87 @@ public class RolloutSimulator {
                     }
                 }
             }
-                        
         }
 	
         writer.close();
 		
 	}
 	
-	public void readFromFile(){
+	public void readFromFile() throws IOException{
+		File f = new File("probs.txt");
+
+        FileReader fReader = new FileReader(f);
+        BufferedReader reader = new BufferedReader(fReader);
+        reader.readLine();
+        for (int i = 2; i < 15; i++) {
+	        for (int j = i; j < 15; j++) {
+	        	if(i==j) {
+	        		double [] probs = new double[9];
+	        		EqClass unsuited = new EqClass(new int[]{i, j}, false);
+	        		
+	        		for (int k = 2; k < 11; k++) {
+	        			String[] s = reader.readLine().split(" ");
+		            	probs[k-2] = Double.parseDouble(s[4]);
+		            }
+	        		
+	        		this.rolloutTable.put(unsuited, probs);
+	        	}
+	        	else {
+	        		double [] probs1 = new double[9];
+		        	double [] probs2 = new double[9];
+		        	EqClass unsuited = new EqClass(new int[]{i, j}, false);
+		        	EqClass suited = new EqClass(new int[]{i, j}, true);
+		        	
+		        	for (int k = 2; k < 11; k++) {
+		            	String[] s1 = reader.readLine().split(" ");
+	            		probs1[k-2] = Double.parseDouble(s1[4]);
+	            		
+	            		String[] s2 = reader.readLine().split(" ");
+	            		probs2[k-2] = Double.parseDouble(s2[4]);
+		            	
+				    }
+		        	
+		        	this.rolloutTable.put(unsuited, probs1);
+		        	this.rolloutTable.put(suited, probs2);
+		        }
+	               
+	        }
+        }
+        
+        reader.close();
+	}
+	
+	public void getProb(EqClass eqClass, int numOfPlayers){
 		
 	}
 	
 	public static void main(String [] args){
 		RolloutSimulator rSim = new RolloutSimulator();
-		double [] prob = rSim.calcProb(rSim.new EqClass(new int[]{2, 7}, false));
+		//rSim.fillTable();
 		
-		for(int i=0; i<9;i++){
-			System.out.println(prob[i]);
+		try {
+			rSim.readFromFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		EqClass suitedAceKing = rSim.new EqClass(new int[]{13, 14}, true);
+		EqClass unsuitedAceKing = rSim.new EqClass(new int[]{14, 14}, false);
+		EqClass unsuitedTwoSeven = rSim.new EqClass(new int[]{2, 7}, false);
+		EqClass pocketKings = rSim.new EqClass(new int[]{13, 13}, false);
+		EqClass pocketAces = rSim.new EqClass(new int[]{14, 14}, false);
+		
+		
+		System.out.println("Some select probs when playing head to head:");
+		
+		System.out.println("Suited A K: " + rSim.rolloutTable.get(suitedAceKing)[0]);
+		System.out.println("Unsuited A K: " + rSim.rolloutTable.get(unsuitedAceKing)[0]);
+		System.out.println("Unsuited 2 7: " + rSim.rolloutTable.get(unsuitedTwoSeven)[0]);
+		System.out.println("Pocket K: " + rSim.rolloutTable.get(pocketKings)[0]);
+		System.out.println("Pocket A: " + rSim.rolloutTable.get(pocketAces)[0]);
+		
+		
 	}
 
 }
