@@ -108,7 +108,7 @@ public class Player {
 	/*
 	 * Method for deciding which action to take before the flop.
 	 */
-	public Action decidePreFlopAction(boolean allowedToFold){
+	public Action decidePreFlopAction(boolean allowedToFold, boolean intelligent){
 		
 		int randNum = (int)(Math.random()*3 + 1);
 		
@@ -146,7 +146,7 @@ public class Player {
 		
 		return action;
 	}
-	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log){
+	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log, boolean intelligent){
 		
 		Action action = Action.CALL;
 		
@@ -188,6 +188,58 @@ public class Player {
 			action = Action.CALL;
 		
 		return action;
+	}
+	
+	public double handStength(ArrayList<Card> sharedCards, int numOfPlayers){
+		
+		ArrayList<Card> hand = new ArrayList<Card>();
+		hand.addAll(this.getCards());
+		hand.addAll(sharedCards);
+		calculateCurrentRating(hand, false);
+		
+		
+		Deck deck = new Deck();
+		for(Card c: hand){
+			deck.getSpecificCard(c);
+		}
+
+		
+		double wins = 0;
+		double ties = 0;
+		double losses = 0;
+		
+		for(Card c: deck.getCards()){
+			for (int i = deck.getCards().indexOf(c)+1; i < deck.getCards().size(); i++) {
+				ArrayList<Card> opponentHand = new ArrayList<Card>();
+				opponentHand.addAll(sharedCards);
+				opponentHand.add(c);
+				opponentHand.add(deck.getCards().get(i));
+				
+				CardRating rating = new CardRating();
+				int[]opponentHandRating = rating.calcCardsPower(opponentHand);
+				
+				if(this.currentCardRating[0]==opponentHandRating[0]){
+					if(this.currentCardRating[1]==opponentHandRating[1]){
+						ties++;
+					}
+					else if(this.currentCardRating[1]>opponentHandRating[1]){
+						wins++;
+					}
+					else{
+						losses++;
+					}
+				}
+				else if(this.currentCardRating[0]>opponentHandRating[0]){
+					wins++;
+				}
+				else{
+					losses++;
+				}
+				
+			}
+		}
+		
+		return Math.pow(((wins+(ties/2))/(wins+ties+losses)), numOfPlayers);
 	}
 	
 }

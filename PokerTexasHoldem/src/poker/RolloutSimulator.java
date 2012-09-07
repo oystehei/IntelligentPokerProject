@@ -66,7 +66,6 @@ public class RolloutSimulator {
 					rolloutTable.put(suited, calcProb(suited));
 					rolloutTable.put(unsuited, calcProb(unsuited));
 				}
-					
 			}
 		}
 		
@@ -115,7 +114,7 @@ public class RolloutSimulator {
 	}
 	
 	/*
-	 * Method for doing one single rollout. Returns 1 if you win, -1 if you tie and 0 if you loose
+	 * Method for doing one single rollout. Returns 1 if you win, 0 if you tie and -1 if you loose
 	 */
 	public int doRollout(ArrayList<Card> wholeCards, int numOfPlayers){
 		

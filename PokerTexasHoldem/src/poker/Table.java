@@ -25,6 +25,7 @@ public class Table {
 		this.bigBlindID = 1;
 		this.currentBet = 0;
 		this.deck = new Deck();
+		this.lastWinners = new ArrayList<Player>();
 	}
 
 	
@@ -128,7 +129,7 @@ public class Table {
 	}
 	
 	
-	public ArrayList<Player> getLastWinner() {
+	public ArrayList<Player> getLastWinners() {
 		return lastWinners;
 	}
 
@@ -188,7 +189,8 @@ public class Table {
 	 * Only one player left, give him the pot and reset the table
 	 */
 	public void endRound(ArrayList<Player> winners){
-		this.lastWinners = winners;
+		this.lastWinners.clear();
+		this.lastWinners.addAll(winners);
 		if(winners.size()>1){
 			for (Player player : winners) {
 				player.addMoney(getPotSize()/winners.size());
