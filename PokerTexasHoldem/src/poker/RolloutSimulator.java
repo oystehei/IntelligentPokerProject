@@ -47,9 +47,10 @@ public class RolloutSimulator {
 	
 	private HashMap<EqClass, double[]> rolloutTable;
 	
-	public RolloutSimulator(){
+	public RolloutSimulator() throws IOException{
 		this.rolloutTable = new HashMap<EqClass, double[]>();
 		this.table = new Table();
+		this.readFromFile();
 	}
 	
 	public void fillTable(){
@@ -251,18 +252,10 @@ public class RolloutSimulator {
 		return this.rolloutTable.get(eqClass)[numOfPlayers-2];
 	}
 	
-	public static void main(String [] args){
+	/*
+	public static void main(String [] args) throws IOException{
 		RolloutSimulator rSim = new RolloutSimulator();
-		//rSim.fillTable();
-		
-		try {
-			rSim.readFromFile();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+	
 		//Example of getting prob for a given combination of cards
 		System.out.println("Prob when playing against 9 others:");
 		
@@ -277,9 +270,9 @@ public class RolloutSimulator {
 		
 		System.out.println("Suited A K: " + rSim.getProb(wholeCards, 10));
 		System.out.println("Pocket A: " + rSim.getProb(wholeCards2, 10));
-		
-		
-		
+				
 	}
+	*/
+	
 
 }

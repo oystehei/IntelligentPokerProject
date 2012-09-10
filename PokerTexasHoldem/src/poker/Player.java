@@ -1,5 +1,6 @@
 package poker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player {
@@ -8,10 +9,11 @@ public class Player {
 	private int money;
 	private ArrayList<Card> wholeCards;
 	private int currentBet;	//The current bet of the player
-	public enum PlayerType{DEFENSIVE, NORMAL, AGGRESSIVE};
+	public enum PlayerType{DEFENSIVE, NORMAL, AGGRESSIVE, INTELLIGENT};
 	public enum Action{FOLD, CALL, RAISE};
 	private PlayerType type;
 	private int[] currentCardRating;
+	private RolloutSimulator rSim;
 	
 	/*
 	 * Creates a new Player instance with the specified ID, amount of money and playing style
@@ -24,6 +26,12 @@ public class Player {
 		this.currentBet = 0;
 		this.wholeCards = new ArrayList<Card>();
 		this.setCurrentCardRating(new int[] {0,0});
+		try {
+			this.rSim = new RolloutSimulator();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	
@@ -108,7 +116,22 @@ public class Player {
 	/*
 	 * Method for deciding which action to take before the flop.
 	 */
-	public Action decidePreFlopAction(boolean allowedToFold, boolean intelligent){
+	public Action decidePreFlopAction(boolean allowedToFold, int numOfPlayers){
+		
+		if(this.type == PlayerType.INTELLIGENT){
+			return smartPreFlopAction(allowedToFold, numOfPlayers);
+		}
+		
+		else{
+			return stupidPreFlopAction(allowedToFold);
+		}
+			
+	}
+	
+	/*
+	 * Method for deciding which action to take before the flop based on pure randomness.
+	 */
+	public Action stupidPreFlopAction(boolean allowedToFold){
 		
 		int randNum = (int)(Math.random()*3 + 1);
 		
@@ -146,7 +169,45 @@ public class Player {
 		
 		return action;
 	}
-	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log, boolean intelligent){
+	
+	/*
+	 * Method for deciding which action to take before the flop based on preflop rollout
+	 */
+	public Action smartPreFlopAction(boolean allowedToFold, int numOfPlayers){
+		
+		double winningProb = this.rSim.getProb(this.wholeCards, numOfPlayers);
+		
+		Action action;
+		
+		if(Math.pow(winningProb, (1/numOfPlayers)) > 0.6)
+			action = Action.RAISE;
+		else if(Math.pow(winningProb, (1/numOfPlayers)) > 0.3)
+			action = Action.CALL;
+		else
+			action = Action.FOLD;
+		
+		if(!allowedToFold && action == Action.FOLD)
+			action = Action.CALL;
+		
+		return action;
+	}
+	
+	public Action decideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log, int numOfPLayers){
+		
+		if(this.type == PlayerType.INTELLIGENT)
+			return smartDecideAction(allowedToFold, sharedCards, log, numOfPLayers);
+		
+		else
+			return stupidDecideAction(allowedToFold, sharedCards, log);
+	
+	
+	}
+	
+	
+	/*
+	 * Method for deciding action after flop, based on power rating
+	 */
+	public Action stupidDecideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log){
 		
 		Action action = Action.CALL;
 		
@@ -190,7 +251,30 @@ public class Player {
 		return action;
 	}
 	
-	public double handStength(ArrayList<Card> sharedCards, int numOfPlayers){
+	
+	/*
+	 * Method for deciding action after flop, based on power rating
+	 */
+	public Action smartDecideAction(boolean allowedToFold, ArrayList<Card> sharedCards, boolean log, int numOfPlayers){
+		
+		Action action;
+		double handStength = handStrength(sharedCards, numOfPlayers);
+		
+		if(handStength > 0.6)
+			action = Action.RAISE;
+		else if(handStength > 0.3)
+			action = Action.CALL;
+		else
+			action = Action.FOLD;
+		
+		if(!allowedToFold && action == Action.FOLD)
+			action = Action.CALL;
+		
+		return action;
+		
+	}
+	
+	public double handStrength(ArrayList<Card> sharedCards, int numOfPlayers){
 		
 		ArrayList<Card> hand = new ArrayList<Card>();
 		hand.addAll(this.getCards());

@@ -13,7 +13,7 @@ public class PokerSimulator {
 	private int raiseAmount;	//The fixed amount of the raise
 	private int numOfRaises;	//The current number of raises
 	private int maxRaises;	//The max amount of raises each round
-	private PlayerType[] types = new PlayerType[] {PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE};
+	private PlayerType[] types = new PlayerType[] {PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.INTELLIGENT, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE};
 	
 	
 	/*
@@ -56,7 +56,7 @@ public class PokerSimulator {
 	}
 	
 	
-	public boolean initiatePreFlopBetting(boolean log, boolean intelligent){
+	public boolean initiatePreFlopBetting(boolean log){
 		
 		boolean bettingEnded = false;
 		int raisePlayer = -1;	//ID of the player with the latest raise
@@ -71,7 +71,7 @@ public class PokerSimulator {
 				
 				boolean allowedToFold = !((player.getPlayerID() == table.getBigBlindID() && raisePlayer==-1) || player.getPlayerID() == raisePlayer);
 				
-				Action playerAction = player.decidePreFlopAction(allowedToFold, intelligent);
+				Action playerAction = player.decidePreFlopAction(allowedToFold, this.table.getActivePlayers().size());
 				
 				if(playerAction == Action.FOLD){
 										
@@ -161,7 +161,7 @@ public class PokerSimulator {
 	/*
 	 * Method for initiating betting between players in after the flop, turn and river cards
 	 */
-	public boolean initiateBetting(boolean log, boolean intelligent){
+	public boolean initiateBetting(boolean log){
 		
 		boolean bettingEnded = false;
 		Player raisePlayer = null;	//ID of the player with the latest raise
@@ -181,8 +181,7 @@ public class PokerSimulator {
 				
 				boolean allowedToFold = !(player == raisePlayer || raisePlayer == null);
 				
-				Action playerAction = player.decideAction(allowedToFold, this.table.getSharedCards(), log, intelligent);
-				System.out.println("Hand strength for spiller"+Integer.toString(player.getPlayerID())+" er:"+player.handStength(this.table.getSharedCards(),this.table.getActivePlayers().size()));								
+				Action playerAction = player.decideAction(allowedToFold, this.table.getSharedCards(), log, this.table.getActivePlayers().size());
 				
 				if(playerAction == Action.FOLD){
 										
@@ -193,7 +192,6 @@ public class PokerSimulator {
 					
 					if(this.table.getActivePlayers().size()==1){
 						bettingEnded = true;
-						System.out.println(this.table.getActivePlayers().get(0).getPlayerID());
 						this.table.endRound(this.table.getActivePlayers());
 						return true;
 					}
@@ -320,7 +318,7 @@ public class PokerSimulator {
 		}
 	}
 	
-	public boolean playRound(boolean log, boolean intelligent){
+	public boolean playRound(boolean log){
 		
 		this.startNewRound();
 		
@@ -328,7 +326,7 @@ public class PokerSimulator {
 			this.printTable();
 		
 		//Initiate pre-flop betting
-		if(this.initiatePreFlopBetting(log, intelligent)){
+		if(this.initiatePreFlopBetting(log)){
 			if(log){
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinners().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			}
@@ -347,7 +345,7 @@ public class PokerSimulator {
 		//Deal flop and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealFlop(log);
-		if(this.initiateBetting(log, intelligent)){
+		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
@@ -364,7 +362,7 @@ public class PokerSimulator {
 		//Deal turn and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealTurn(log);
-		if(this.initiateBetting(log, intelligent)){
+		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
@@ -380,7 +378,7 @@ public class PokerSimulator {
 		//Deal river and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealRiver(log);
-		if(this.initiateBetting(log, intelligent)){
+		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
@@ -427,13 +425,13 @@ public class PokerSimulator {
 	
 	public static void main(String args[]){
 		
-		PokerSimulator pokerSim = new PokerSimulator(2, 2000, 50, 100, 50, 2);
+		PokerSimulator pokerSim = new PokerSimulator(4, 2000, 50, 100, 50, 2);
 		
-		for(int i=0; i<1; i++){
-			pokerSim.playRound(true, false);
+		for(int i=0; i<1000; i++){
+			pokerSim.playRound(false);
 		}
 		
-		//pokerSim.printMoney();
+		pokerSim.printMoney();
 		
 		
 	}
