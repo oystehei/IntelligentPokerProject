@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import poker.OpponentModeller.PlayerModelTriplet;
-import poker.RolloutSimulator.EqClass;
 
 public class Player {
 	
@@ -110,12 +109,12 @@ public class Player {
 		
 	}
 	
-	public HashMap<Context, ArrayList<Double>> getActionContext() {
+	public HashMap<PlayerModelTriplet, ArrayList<Double>> getActionContext() {
 		return actionContext;
 	}
 
 
-	public void setActionContext(HashMap<Context, ArrayList<Double>> actionContext) {
+	public void setActionContext(HashMap<PlayerModelTriplet, ArrayList<Double>> actionContext) {
 		this.actionContext = actionContext;
 	}
 	
@@ -217,6 +216,21 @@ public class Player {
 			return stupidDecideAction(allowedToFold, sharedCards, log);
 	
 	
+	}
+	
+	public void saveContex(Table table, Action playerAction, int numOfRaises, OpponentModeller opModeller){
+		if(this.getActionContext().containsKey(opModeller.new PlayerModelTriplet(table.getContext(this, numOfRaises), playerAction, this))){
+			
+			ArrayList<Double> temp = this.getActionContext().get(opModeller.new PlayerModelTriplet(table.getContext(this, numOfRaises), playerAction, this));
+			temp.add(this.handStrength(table.getSharedCards(), table.getActivePlayers().size()));
+			this.getActionContext().put(opModeller.new PlayerModelTriplet(table.getContext(this, numOfRaises), playerAction, this), temp);
+		
+		}
+		else{
+			ArrayList<Double> handStrengths = new ArrayList<Double>();
+			handStrengths.add(this.handStrength(table.getSharedCards(), table.getActivePlayers().size()));
+			this.getActionContext().put(opModeller.new PlayerModelTriplet(table.getContext(this, numOfRaises), playerAction, this), handStrengths);
+		}
 	}
 	
 	

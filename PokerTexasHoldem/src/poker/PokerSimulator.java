@@ -3,9 +3,8 @@ package poker;
 import java.util.ArrayList;
 
 import poker.Player.Action;
-import poker.Player.ContextActionTuple;
+import poker.OpponentModeller.PlayerModelTriplet;
 import poker.Player.PlayerType;
-
 
 public class PokerSimulator {
 	
@@ -73,16 +72,7 @@ public class PokerSimulator {
 				boolean allowedToFold = !((player.getPlayerID() == table.getBigBlindID() && raisePlayer==-1) || player.getPlayerID() == raisePlayer);
 				
 				Action playerAction = player.decidePreFlopAction(allowedToFold, this.table.getActivePlayers().size());
-				if(player.getActionContext().contains(new ContextActionTuple(this.table.getContext(player, this.getNumOfRaises(), playerAction)))){
-					ArrayList<Double> temp = player.getActionContext().get(this.table.getContext(player, this.getNumOfRaises()));
-					temp.add(player.handStrength(this.table.getSharedCards(), this.table.getActivePlayers().size()));
-					player.getActionContext().put(this.table.getContext(player, this.getNumOfRaises()), temp);
-				}
-				else{
-					ArrayList<Double> handStrengths = new ArrayList<Double>(player.handStrength(this.table.getSharedCards(), this.table.getActivePlayers()));
-					player.getActionContext().put(this.table.getContext(player, this.getNumOfRaises()), handStrengths);
-				}
-				
+
 				
 				if(playerAction == Action.FOLD){
 										
@@ -447,32 +437,6 @@ public class PokerSimulator {
 		
 	}
 	
-	
-	public class ContextActionTuple{
-		
-		public Context context;
-		public Action action;
-		
-		public EqClass(Context context, Action Action){
-			this.context = context;
-			this.action = action;
-		}
-		
-		@Override
-		public int hashCode(){
-			return (this.action.hashCode() * 31) ^ this.context.hashCode();
-		}
-		
-		@Override
-		public boolean equals(Object obj){
-			if(obj instanceof ContextActionTuple) {
-				ContextActionTuple conActTup = (ContextActionTuple) obj;
-				return (this.context == conActTup.context && this.action == conActTup.action);
-			}
-			else
-				return false;
-		}
-		
-	}
+
 
 }

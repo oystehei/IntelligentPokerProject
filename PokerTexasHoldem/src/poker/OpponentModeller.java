@@ -2,6 +2,7 @@ package poker;
 
 import poker.Player.Action;
 import poker.Player.PlayerType;
+import poker.Table.Context;
 
 
 public class OpponentModeller {
@@ -11,7 +12,7 @@ public class OpponentModeller {
 		
 		public Context context;
 		public Action action;
-		public Player player:
+		public Player player;
 		
 		public PlayerModelTriplet(Context context, Action action, Player player){
 			this.context = context;
