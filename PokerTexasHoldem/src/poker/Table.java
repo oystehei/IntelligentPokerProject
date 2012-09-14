@@ -15,6 +15,9 @@ public class Table {
 	private int currentBet;	//The amount of the current bet
 	private Deck deck;	//The deck on the table
 	private ArrayList<Player> lastWinners;	//The player who won the last round
+	private int bettingRound;
+	
+	public enum Context {C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16};
 	
 	public Table(){
 		this.potSize = 0;
@@ -26,6 +29,7 @@ public class Table {
 		this.currentBet = 0;
 		this.deck = new Deck();
 		this.lastWinners = new ArrayList<Player>();
+		this.bettingRound = 1;
 	}
 
 	
@@ -133,6 +137,15 @@ public class Table {
 		return lastWinners;
 	}
 
+	public int getBettingRound() {
+		return bettingRound;
+	}
+
+
+	public void setBettingRound(int bettingRound) {
+		this.bettingRound = bettingRound;
+	}
+
 
 	public void setLastWinner(ArrayList<Player> lastWinners) {
 		this.lastWinners = lastWinners;
@@ -173,6 +186,7 @@ public class Table {
 		setNextBigBlindID();
 		this.activePlayers.addAll(getOrderOfPlayers(this.bigBlindID));
 		setCurrentBet(this.bigBlindAmount);
+		setBettingRound(1);
 		
 		this.players.get(this.smallBlindID-1).reduceMoney(this.smallBlindAmount);
 		this.players.get(this.smallBlindID-1).setCurrentBet(this.smallBlindAmount);
@@ -213,6 +227,7 @@ public class Table {
 		this.sharedCards.add(getNextCard());
 		this.sharedCards.add(getNextCard());
 		this.sharedCards.add(getNextCard());
+		setBettingRound(2);
 		
 		if(log)
 			System.out.println("Sharedcards etter flop: "+this.sharedCards.toString());
@@ -220,6 +235,7 @@ public class Table {
 	
 	public void dealTurn(boolean log){
 		this.sharedCards.add(getNextCard());
+		setBettingRound(3);
 		
 		if(log)
 			System.out.println("Sharedcards etter turn: "+this.sharedCards.toString());
@@ -227,6 +243,7 @@ public class Table {
 	
 	public void dealRiver(boolean log){
 		this.sharedCards.add(getNextCard());
+		setBettingRound(4);
 		
 		if(log)
 			System.out.println("Sharedcards etter river: "+this.sharedCards.toString());
@@ -312,6 +329,87 @@ public class Table {
 			}	
 		}
 		this.getActivePlayers().retainAll(winner);
+	}
+
+	public double getPotOdds(int currentBet){
+		return ((this.getPotSize() - currentBet) / ((this.getPotSize() - currentBet) + this.getPotSize()));
+	}
+
+	public Context getContext(Player player, int numOfRaises){
+		if(this.getBettingRound() ==1){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
+					return Context.C1;
+				}
+				else{
+					return Context.C2;
+				}
+			}
+			else{
+				if(numOfRaises > 1){
+					return Context.C3;
+				}
+				else{
+					return Context.C4;
+				}
+			}
+		}
+		else if(this.getBettingRound() ==2){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
+					return Context.C5;
+				}
+				else{
+					return Context.C6;
+				}
+			}
+			else{
+				if(numOfRaises > 1){
+					return Context.C7;
+				}
+				else{
+					return Context.C8;
+				}
+			}
+		}
+		else if(this.getBettingRound() ==3){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
+					return Context.C9;
+				}
+				else{
+					return Context.C10;
+				}
+			}
+			else{
+				if(numOfRaises > 1){
+					return Context.C11;
+				}
+				else{
+					return Context.C12;
+				}
+			}
+		}
+		else if(this.getBettingRound() ==4){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
+					return Context.C13;
+				}
+				else{
+					return Context.C14;
+				}
+			}
+			else{
+				if(numOfRaises > 1){
+					return Context.C15;
+				}
+				else{
+					return Context.C16;
+				}
+			}
+		}
+		
+		return Context.C1;
 	}
 	
 	
