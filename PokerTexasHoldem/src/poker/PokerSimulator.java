@@ -1,9 +1,7 @@
 package poker;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+
 import poker.Player.Action;
 import poker.OpponentModeller.PlayerModelTriplet;
 import poker.Player.PlayerType;
@@ -15,8 +13,8 @@ public class PokerSimulator {
 	private int raiseAmount;	//The fixed amount of the raise
 	private int numOfRaises;	//The current number of raises
 	private int maxRaises;	//The max amount of raises each round
-	private PlayerType[] types = new PlayerType[] {PlayerType.VERYINTELLIGENT, PlayerType.VERYINTELLIGENT, PlayerType.INTELLIGENT, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE};
-	private OpponentModeller opModeller;
+	private PlayerType[] types = new PlayerType[] {PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.INTELLIGENT, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE};
+	
 	
 	/*
 	 * Description
@@ -29,7 +27,6 @@ public class PokerSimulator {
 		this.maxRaises = maxRaises;
 		this.table.setSmallBlindAmount(smallBlind);
 		this.table.setBigBlindAmount(bigBlind);
-		this.opModeller = new OpponentModeller();
 		
 		
 		if(numOfPlayers >= 2 && numOfPlayers <= 10)
@@ -59,7 +56,7 @@ public class PokerSimulator {
 	}
 	
 	
-	public boolean initiatePreFlopBetting(boolean log, boolean gatherStats){
+	public boolean initiatePreFlopBetting(boolean log){
 		
 		boolean bettingEnded = false;
 		int raisePlayer = -1;	//ID of the player with the latest raise
@@ -71,18 +68,15 @@ public class PokerSimulator {
 			
 						
 			for(Player player: activePlayers){
-								
+				
 				boolean allowedToFold = !((player.getPlayerID() == table.getBigBlindID() && raisePlayer==-1) || player.getPlayerID() == raisePlayer);
 				
-				Action playerAction = player.decidePreFlopAction(allowedToFold, this.table, this.opModeller, this.numOfRaises, gatherStats);
+				Action playerAction = player.decidePreFlopAction(allowedToFold, this.table.getActivePlayers().size());
+
 				
-				if(gatherStats){
-					player.saveContex(this.table, playerAction, this.numOfRaises, this.opModeller, true);
-				}
 				if(playerAction == Action.FOLD){
 										
 					this.table.getActivePlayers().remove(player);
-					player.setActionContext(new HashMap<PlayerModelTriplet, Double>());
 					
 					if(log)
 						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " kastet seg.");
@@ -168,7 +162,7 @@ public class PokerSimulator {
 	/*
 	 * Method for initiating betting between players in after the flop, turn and river cards
 	 */
-	public boolean initiateBetting(boolean log, boolean gatherStats){
+	public boolean initiateBetting(boolean log){
 		
 		boolean bettingEnded = false;
 		Player raisePlayer = null;	//ID of the player with the latest raise
@@ -188,17 +182,11 @@ public class PokerSimulator {
 				
 				boolean allowedToFold = !(player == raisePlayer || raisePlayer == null);
 				
-				
-				Action playerAction = player.decideAction(allowedToFold, this.table.getSharedCards(), log, this.table.getActivePlayers().size(), this.table, this.numOfRaises, this.opModeller, gatherStats);
-				
-				if(gatherStats){
-					player.saveContex(this.table, playerAction, this.numOfRaises, this.opModeller, false);
-				}
+				Action playerAction = player.decideAction(allowedToFold, this.table.getSharedCards(), log, this.table.getActivePlayers().size());
 				
 				if(playerAction == Action.FOLD){
 										
 					this.table.getActivePlayers().remove(player);
-					player.setActionContext(new HashMap<PlayerModelTriplet, Double>());
 					
 					if(log)
 						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " kastet seg.");
@@ -288,16 +276,6 @@ public class PokerSimulator {
 		winner.add(table.getActivePlayers().get(0));
 		int highestRating = 0;
 		for(Player player : table.getActivePlayers()){
-			Set<PlayerModelTriplet> contexts = player.getActionContext().keySet();
-			
-			Iterator<PlayerModelTriplet> itr = contexts.iterator();
-			while(itr.hasNext()){
-				PlayerModelTriplet triplet = itr.next();
-				opModeller.saveContex(triplet, player.getActionContext().get(triplet));
-				
-			}
-			player.setActionContext(new HashMap<PlayerModelTriplet, Double>());
-			
 			
 			if(log)
 				System.out.println("Spiller"+player.getPlayerID()+" viser "+player.getCards().toString()+" med en rating på: "+player.getCurrentCardRating()[0]+", og highcard:"+player.getCurrentCardRating()[1]);
@@ -341,7 +319,7 @@ public class PokerSimulator {
 		}
 	}
 	
-	public boolean playRound(boolean log, boolean gatherStats){
+	public boolean playRound(boolean log){
 		
 		this.startNewRound();
 		
@@ -349,7 +327,7 @@ public class PokerSimulator {
 			this.printTable();
 		
 		//Initiate pre-flop betting
-		if(this.initiatePreFlopBetting(log, gatherStats)){
+		if(this.initiatePreFlopBetting(log)){
 			if(log){
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinners().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			}
@@ -368,7 +346,7 @@ public class PokerSimulator {
 		//Deal flop and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealFlop(log);
-		if(this.initiateBetting(log, gatherStats)){
+		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
@@ -385,7 +363,7 @@ public class PokerSimulator {
 		//Deal turn and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealTurn(log);
-		if(this.initiateBetting(log, gatherStats)){
+		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
@@ -401,7 +379,7 @@ public class PokerSimulator {
 		//Deal river and initiate betting
 		this.setNumOfRaises(0);
 		this.table.dealRiver(log);
-		if(this.initiateBetting(log, gatherStats)){
+		if(this.initiateBetting(log)){
 			if(log)
 				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
@@ -448,24 +426,14 @@ public class PokerSimulator {
 	
 	public static void main(String args[]){
 		
-		PokerSimulator pokerSim = new PokerSimulator(6, 2000, 50, 100, 50, 2);
+		PokerSimulator pokerSim = new PokerSimulator(4, 2000, 50, 100, 50, 2);
 		
 		for(int i=0; i<1000; i++){
-			
-			pokerSim.playRound(false, true);
-		}
-		pokerSim.opModeller.finishModel();
-		
-
-		
-		for(Player player: pokerSim.table.getPlayers())
-			player.setMoney(2000);
-
-		for(int i=0; i<1000; i++){
-			pokerSim.playRound(false, false);
+			pokerSim.playRound(false);
 		}
 		
 		pokerSim.printMoney();
+		
 		
 	}
 	

@@ -218,7 +218,6 @@ public class Table {
 		
 		for(Player player: this.getPlayers()){
 			player.resetCards();
-			player.setCurrentBet(0);
 		}
 		
 		this.deck = new Deck();
@@ -333,14 +332,13 @@ public class Table {
 	}
 
 	public double getPotOdds(int currentBet){
-		
-		return ((double)(this.getCurrentBet() - currentBet) / (double)((this.getCurrentBet() - currentBet) + this.getPotSize()));
+		return ((this.getPotSize() - currentBet) / ((this.getPotSize() - currentBet) + this.getPotSize()));
 	}
 
 	public Context getContext(Player player, int numOfRaises){
 		if(this.getBettingRound() ==1){
-			if(this.getPotOdds(player.getCurrentBet()) > 0.1){
-				if(numOfRaises > 0){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
 					return Context.C1;
 				}
 				else{
@@ -348,7 +346,7 @@ public class Table {
 				}
 			}
 			else{
-				if(numOfRaises > 0.1){
+				if(numOfRaises > 1){
 					return Context.C3;
 				}
 				else{
@@ -357,8 +355,8 @@ public class Table {
 			}
 		}
 		else if(this.getBettingRound() ==2){
-			if(this.getPotOdds(player.getCurrentBet()) > 0.1){
-				if(numOfRaises > 0){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
 					return Context.C5;
 				}
 				else{
@@ -366,7 +364,7 @@ public class Table {
 				}
 			}
 			else{
-				if(numOfRaises > 0){
+				if(numOfRaises > 1){
 					return Context.C7;
 				}
 				else{
@@ -375,8 +373,8 @@ public class Table {
 			}
 		}
 		else if(this.getBettingRound() ==3){
-			if(this.getPotOdds(player.getCurrentBet()) > 0.1){
-				if(numOfRaises > 0){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
 					return Context.C9;
 				}
 				else{
@@ -384,7 +382,7 @@ public class Table {
 				}
 			}
 			else{
-				if(numOfRaises > 0){
+				if(numOfRaises > 1){
 					return Context.C11;
 				}
 				else{
@@ -393,8 +391,8 @@ public class Table {
 			}
 		}
 		else if(this.getBettingRound() ==4){
-			if(this.getPotOdds(player.getCurrentBet()) > 0.1){
-				if(numOfRaises > 0){
+			if(this.getPotOdds(player.getCurrentBet()) > 0.2){
+				if(numOfRaises > 1){
 					return Context.C13;
 				}
 				else{
@@ -402,7 +400,7 @@ public class Table {
 				}
 			}
 			else{
-				if(numOfRaises > 0){
+				if(numOfRaises > 1){
 					return Context.C15;
 				}
 				else{
