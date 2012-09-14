@@ -2,8 +2,13 @@ package poker;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import poker.OpponentModeller.PlayerModelTriplet;
+import poker.RolloutSimulator.EqClass;
 
 public class Player {
+	
 	
 	private int playerID;
 	private int money;
@@ -14,11 +19,13 @@ public class Player {
 	private PlayerType type;
 	private int[] currentCardRating;
 	private RolloutSimulator rSim;
+	private HashMap<PlayerModelTriplet, ArrayList<Double>> actionContext;
 	
 	/*
 	 * Creates a new Player instance with the specified ID, amount of money and playing style
 	 */
 	
+
 	public Player(int ID, int money, PlayerType type){
 		this.playerID = ID;
 		this.money = money;
@@ -101,6 +108,15 @@ public class Player {
 	public String printHand(){
 		return this.wholeCards.get(0).toString() + " " + this.wholeCards.get(1).toString();
 		
+	}
+	
+	public HashMap<Context, ArrayList<Double>> getActionContext() {
+		return actionContext;
+	}
+
+
+	public void setActionContext(HashMap<Context, ArrayList<Double>> actionContext) {
+		this.actionContext = actionContext;
 	}
 	
 	public void calculateCurrentRating(ArrayList<Card> cards, boolean log){

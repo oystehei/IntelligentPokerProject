@@ -269,7 +269,7 @@ public class Table {
 	}
 	
 	
-public void initiateShowdown(boolean log){
+	public void initiateShowdown(boolean log){
 		
 		ArrayList<Player> winner = new ArrayList<Player>(); 
 		winner.add(this.getActivePlayers().get(0));
