@@ -103,6 +103,16 @@ public class Player {
 	public void setCurrentBet(int currentBet) {
 		this.currentBet = currentBet;
 	}
+	
+	
+	public PlayerType getType() {
+		return type;
+	}
+
+
+	public void setType(PlayerType type) {
+		this.type = type;
+	}
 
 
 	public void addCard(Card card) {
