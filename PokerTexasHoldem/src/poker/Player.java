@@ -400,14 +400,14 @@ public class Player {
 		if(this.type == PlayerType.DEFENSIVE){
 			
 			if(numOfRaises > 0 || potOdds > 0.1){
-				if(currentCardRating[0] > 7)
+				if(currentCardRating[0] > 5)
 					action = Action.CALL;
 				else
 					action = Action.FOLD;
 			}
 			else {
 			
-				if(currentCardRating[0] > 7)
+				if(currentCardRating[0] > 6)
 					action = Action.RAISE;
 				else if(currentCardRating[0] > 3)
 					action = Action.CALL;
@@ -418,7 +418,7 @@ public class Player {
 		else if(this.type == PlayerType.NORMAL){
 
 			if(numOfRaises > 0 || potOdds > 0.1){
-				if(currentCardRating[0] > 5)
+				if(currentCardRating[0] > 4)
 					action = Action.CALL;
 				else
 					action = Action.FOLD;
@@ -427,7 +427,7 @@ public class Player {
 			
 				if(currentCardRating[0] > 5)
 					action = Action.RAISE;
-				else if(currentCardRating[0] > 3)
+				else if(currentCardRating[0] > 2)
 					action = Action.CALL;
 				else
 					action = Action.FOLD;
