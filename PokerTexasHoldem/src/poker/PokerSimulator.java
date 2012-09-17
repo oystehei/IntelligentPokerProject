@@ -15,7 +15,7 @@ public class PokerSimulator {
 	private int raiseAmount;	//The fixed amount of the raise
 	private int numOfRaises;	//The current number of raises
 	private int maxRaises;	//The max amount of raises each round
-	private PlayerType[] types = new PlayerType[] {PlayerType.VERYINTELLIGENTAVG, PlayerType.INTELLIGENT, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.INTELLIGENT};
+	private PlayerType[] types = new PlayerType[] {PlayerType.INTELLIGENT, PlayerType.INTELLIGENT, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.INTELLIGENT};
 	private OpponentModeller opModeller;
 
 	/*
@@ -377,7 +377,7 @@ public class PokerSimulator {
 		this.table.dealFlop(log);
 		if(this.initiateBetting(log, gatherStats)){
 			if(log)
-				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinners().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}	
 		else {
@@ -394,7 +394,7 @@ public class PokerSimulator {
 		this.table.dealTurn(log);
 		if(this.initiateBetting(log, gatherStats)){
 			if(log)
-				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinners().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}	
 		else {
@@ -410,7 +410,7 @@ public class PokerSimulator {
 		this.table.dealRiver(log);
 		if(this.initiateBetting(log, gatherStats)){
 			if(log)
-				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getActivePlayers().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
+				System.out.println("Runden er over, Spiller" + Integer.toString(this.table.getLastWinners().get(0).getPlayerID()) + " vant " + Integer.toString(this.table.getPotSize()) + "kr");
 			return true;
 		}	
 		else {
@@ -455,9 +455,9 @@ public class PokerSimulator {
 
 	public static void main(String args[]){
 		
-		/*
-		PokerSimulator pokerSim = new PokerSimulator(2, 2000, 50, 100, 50, 2);
 		
+		PokerSimulator pokerSim = new PokerSimulator(2, 2000, 50, 100, 50, 2);
+		/*
 		
 		for(int i=0; i<1000; i++){
 
@@ -469,9 +469,9 @@ public class PokerSimulator {
 		
 		for(Player player: pokerSim.table.getPlayers())
 			player.setMoney(2000);
-
+		*/
 		for(int i=1; i<=3000; i++){
-			pokerSim.playRound(false, false);
+			pokerSim.playRound(true, false);
 			if(i%1000 == 0){
 				pokerSim.printMoney();
 				for(Player player: pokerSim.table.getPlayers())
@@ -479,6 +479,7 @@ public class PokerSimulator {
 			}
 		}
 		
+		/*
 		
 		Set<PlayerModelTriplet> contexts = pokerSim.opModeller.finishedModel.keySet();
 
