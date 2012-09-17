@@ -219,6 +219,8 @@ public class Table {
 		for(Player player: this.getPlayers()){
 			player.resetCards();
 			player.setCurrentBet(0);
+			player.setLastAction(null);
+			player.setBluffing(false);
 		}
 
 		this.deck = new Deck();
@@ -229,6 +231,12 @@ public class Table {
 		this.sharedCards.add(getNextCard());
 		this.sharedCards.add(getNextCard());
 		setBettingRound(2);
+		
+		for(Player player: this.getActivePlayers()){
+			player.setLastAction(null);
+			player.setBluffing(false);
+		}
+			
 
 		if(log)
 			System.out.println("Sharedcards etter flop: "+this.sharedCards.toString());
@@ -237,6 +245,11 @@ public class Table {
 	public void dealTurn(boolean log){
 		this.sharedCards.add(getNextCard());
 		setBettingRound(3);
+		
+		for(Player player: this.getActivePlayers()){
+			player.setLastAction(null);
+			player.setBluffing(false);
+		}
 
 		if(log)
 			System.out.println("Sharedcards etter turn: "+this.sharedCards.toString());
@@ -245,6 +258,11 @@ public class Table {
 	public void dealRiver(boolean log){
 		this.sharedCards.add(getNextCard());
 		setBettingRound(4);
+		
+		for(Player player: this.getActivePlayers()){
+			player.setLastAction(null);
+			player.setBluffing(false);
+		}
 
 		if(log)
 			System.out.println("Sharedcards etter river: "+this.sharedCards.toString());

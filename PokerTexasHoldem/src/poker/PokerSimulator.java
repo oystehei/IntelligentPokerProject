@@ -15,7 +15,7 @@ public class PokerSimulator {
 	private int raiseAmount;	//The fixed amount of the raise
 	private int numOfRaises;	//The current number of raises
 	private int maxRaises;	//The max amount of raises each round
-	private PlayerType[] types = new PlayerType[] {PlayerType.VERYINTELLIGENT, PlayerType.VERYINTELLIGENT, PlayerType.INTELLIGENT, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE};
+	private PlayerType[] types = new PlayerType[] {PlayerType.VERYINTELLIGENTBEST, PlayerType.VERYINTELLIGENTAVG, PlayerType.INTELLIGENT, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE, PlayerType.NORMAL, PlayerType.AGGRESSIVE, PlayerType.DEFENSIVE};
 	private OpponentModeller opModeller;
 
 	/*
@@ -107,6 +107,8 @@ public class PokerSimulator {
 					player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 					this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 					player.setCurrentBet(this.table.getCurrentBet());
+					player.setLastAction(Action.CALL);
+
 
 					if(log)
 						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
@@ -127,6 +129,7 @@ public class PokerSimulator {
 						player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 						this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 						player.setCurrentBet(this.table.getCurrentBet());
+						player.setLastAction(Action.CALL);
 
 						if(log)
 							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
@@ -147,6 +150,7 @@ public class PokerSimulator {
 						player.setCurrentBet(this.table.getCurrentBet());
 						this.numOfRaises++;
 						raisePlayer = player.getPlayerID();
+						player.setLastAction(Action.RAISE);
 
 						if(log)
 							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " h¿ynet.");
@@ -223,6 +227,7 @@ public class PokerSimulator {
 					player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 					this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 					player.setCurrentBet(this.table.getCurrentBet());
+					player.setLastAction(Action.CALL);
 
 					if(log)
 						System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
@@ -242,6 +247,7 @@ public class PokerSimulator {
 						player.reduceMoney(this.table.getCurrentBet() - player.getCurrentBet());
 						this.table.addToPot(this.table.getCurrentBet() - player.getCurrentBet());
 						player.setCurrentBet(this.table.getCurrentBet());
+						player.setLastAction(Action.CALL);
 
 						if(log)
 							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " ser.");
@@ -262,6 +268,7 @@ public class PokerSimulator {
 						player.setCurrentBet(this.table.getCurrentBet());
 						this.numOfRaises++;
 						raisePlayer = player;
+						player.setLastAction(Action.RAISE);
 
 						if(log)
 							System.out.println("Spiller" + Integer.toString(player.getPlayerID()) + " h¿ynet.");
@@ -447,10 +454,10 @@ public class PokerSimulator {
 
 
 	public static void main(String args[]){
-
-		PokerSimulator pokerSim = new PokerSimulator(6, 2000, 50, 100, 50, 2);
-
-		for(int i=0; i<1000; i++){
+		
+		PokerSimulator pokerSim = new PokerSimulator(4, 2000, 50, 100, 50, 2);
+		
+		for(int i=0; i<5000; i++){
 
 			pokerSim.playRound(false, true);
 		}
@@ -460,12 +467,30 @@ public class PokerSimulator {
 
 		for(Player player: pokerSim.table.getPlayers())
 			player.setMoney(2000);
+	
 
-		for(int i=0; i<1000; i++){
+		for(int i=1; i<=5000; i++){
+			if(i%1000 == 0){
+				pokerSim.printMoney();
+				for(Player player: pokerSim.table.getPlayers())
+					player.setMoney(2000);
+			}
 			pokerSim.playRound(false, false);
 		}
+		
+		/*
+		Set<PlayerModelTriplet> contexts = pokerSim.opModeller.finishedModel.keySet();
 
-		pokerSim.printMoney();
+		Iterator<PlayerModelTriplet> itr = contexts.iterator();
+		while(itr.hasNext()){
+			PlayerModelTriplet triplet = itr.next();
+			System.out.println(triplet.toString() + " Value: " + pokerSim.opModeller.finishedModel.get(triplet)[0]);
+		}
+		*/
+	
+	
+		//pokerSim.printMoney();
+		
 
 	}
 
